@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nils Dueren – Film Editor</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      color: #111111;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: normal;
+      color: #666;
+      margin-top: 0;
+    }
+
+    .accent {
+      color: #FFD400;
+    }
+
+    .section {
+      margin-top: 80px;
+    }
+
+    .reel {
+      margin-top: 40px;
+      border: 2px solid #FFD400;
+      padding: 8px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 480px;
+      border: none;
+    }
+
+    .work-item {
+      padding: 16px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    a {
+      color: #111;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: #FFD400;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- HERO -->
+    <h1>Dein Name</h1>
+    <h2>Film Editor · Narrative · Documentary</h2>
+
+    <!-- SHOWREEL -->
+    <div class="section">
+      <h3><span class="accent">Showreel</span></h3>
+
+      <div class="reel">
+        <!-- HIER später dein Vimeo-Link einfügen -->
+        <iframe src="https://player.vimeo.com/video/000000000" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <!-- WORK -->
+    <div class="section">
+      <h3>Selected Work</h3>
+
+      <div class="work-item">Projekt 1 – Kurzbeschreibung</div>
+      <div class="work-item">Projekt 2 – Kurzbeschreibung</div>
+      <div class="work-item">Projekt 3 – Kurzbeschreibung</div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="section">
+      <h3>About</h3>
+      <p>
+        Ich bin Film Editor mit Fokus auf narrativen und dokumentarischen Projekten.
+        Mein Interesse gilt der Montage als erzählerisches Werkzeug – Rhythmus, Emotion und Struktur stehen im Zentrum meiner Arbeit.
+      </p>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="section">
+      <h3>Contact</h3>
+      <p>
+        <a href="mailto:deinmail@email.com">deinmail@email.com</a>
+      </p>
+    </div>
+
+  </div>
+
+</body>
+</html>
