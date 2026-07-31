@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nils Düren — Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Archivo:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0c0c0e;
+    --surface: #17171b;
+    --surface-2: #1f1f24;
+    --line: rgba(236,232,225,0.09);
+    --line-strong: rgba(236,232,225,0.18);
+    --text: #ece8e1;
+    --text-dim: #918f89;
+    --accent: #c9a24b;
+    --accent-dim: #8a713a;
+    --velvet: #7a2631;
+    --gap: clamp(1rem, 2vw, 1.75rem);
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(201,162,75,0.06), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Archivo', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection{ background: var(--accent); color: #0c0c0e; }
+  :focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  a{ color: inherit; text-decoration: none; }
+
+  .wrap{
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 4vw, 3rem);
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(12,12,14,0.82);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .header-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 1.1rem 0;
+  }
+  .brand{
+    font-family:'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .contact-links{
+    display:flex;
+    gap: 1.5rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .contact-links a{ position:relative; padding-bottom:2px; transition:color .25s; }
+  .contact-links a:hover{ color: var(--accent); }
+  .contact-links a::after{
+    content:''; position:absolute; left:0; right:0; bottom:-2px; height:1px;
+    background: var(--accent); transform: scaleX(0); transform-origin: left;
+    transition: transform .25s;
+  }
+  .contact-links a:hover::after{ transform: scaleX(1); }
+
+  /* ---------- Hero / Showreel ---------- */
+  .hero{
+    padding: clamp(2rem, 5vw, 3.5rem) 0 clamp(1.5rem, 4vw, 2.5rem);
+  }
+  .hero-frame{
+    position: relative;
+    border: 1px solid var(--line-strong);
+    background: #000;
+  }
+  .hero-frame::before, .hero-frame::after,
+  .corner-tl, .corner-br{
+    content:'';
+    position:absolute;
+    width: 18px; height: 18px;
+    z-index: 2;
+    pointer-events:none;
+  }
+  .corner{
+    position:absolute; width:22px; height:22px; z-index:2; pointer-events:none;
+  }
+  .corner.tl{ top:-1px; left:-1px; border-top:1px solid var(--accent); border-left:1px solid var(--accent); }
+  .corner.tr{ top:-1px; right:-1px; border-top:1px solid var(--accent); border-right:1px solid var(--accent); }
+  .corner.bl{ bottom:-1px; left:-1px; border-bottom:1px solid var(--accent); border-left:1px solid var(--accent); }
+  .corner.br{ bottom:-1px; right:-1px; border-bottom:1px solid var(--accent); border-right:1px solid var(--accent); }
+
+  .ratio-16-9{ position:relative; width:100%; padding-top:56.25%; }
+  .ratio-16-9 iframe, .ratio-16-9 .placeholder, .ratio-16-9 .poster{
+    position:absolute; inset:0; width:100%; height:100%; border:0;
+  }
+  .placeholder{
+    display:flex; align-items:center; justify-content:center;
+    flex-direction: column;
+    gap: .6rem;
+    background:
+      repeating-linear-gradient(115deg, rgba(255,255,255,0.025) 0 2px, transparent 2px 26px),
+      #0a0a0b;
+  }
+  .placeholder .ph-title{
+    position: relative;
+    z-index: 3;
+    font-family:'Syne', sans-serif;
+    font-style: normal;
+    font-weight:700;
+    font-size: clamp(1.5rem, 4.4vw, 2.7rem);
+    color: var(--text-dim);
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+  .poster.has-thumb .ph-title{ color: var(--text); text-shadow: 0 2px 14px rgba(0,0,0,0.7); }
+  .placeholder .ph-note{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--accent-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .play-btn{
+    position: relative;
+    z-index: 3;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    transition: background .25s, transform .25s;
+    flex-shrink: 0;
+  }
+  .play-btn svg{ margin-left: 3px; }
+  .tile .play-btn, .hero-frame .play-btn{ width: 42px; height: 42px; }
+  .poster:hover .play-btn, .poster:focus-visible .play-btn{
+    background: var(--accent);
+    transform: scale(1.06);
+  }
+  .poster:hover .play-btn svg path, .poster:focus-visible .play-btn svg path{ fill: #0c0c0e; }
+  .poster{ cursor:pointer; }
+
+  /* Wenn das Info-Panel aktiv ist (Tap auf Mobile), Play-Button gut sichtbar an den
+     unteren Rand holen statt in der Mitte unter dem Text zu verschwinden. */
+  .tile.is-active .poster .play-btn{
+    position:absolute; left:50%; bottom:1rem; transform:translateX(-50%);
+    z-index: 5;
+    background: var(--accent);
+  }
+  .tile.is-active .poster .play-btn svg path{ fill:#0c0c0e; }
+
+  .reel-meta{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-top: 0.85rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .reel-meta .tc{ color: var(--accent); }
+
+  /* ---------- Bio ---------- */
+  .bio{
+    padding: clamp(2rem, 5vw, 3rem) 0 clamp(2.5rem, 6vw, 4.5rem);
+    border-bottom: 1px solid var(--line);
+  }
+  .bio p{
+    max-width: 46em;
+    margin: 0 auto;
+    text-align: center;
+    text-wrap: pretty;
+    font-family:'Archivo', sans-serif;
+    font-weight: 400;
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    line-height: 1.6;
+    color: #d9d5cd;
+  }
+  .bio p em{ font-style: italic; color: var(--accent); font-weight:500; }
+  .bio p.approach{
+    max-width: 42em;
+    font-size: clamp(0.9rem, 1.2vw, 1rem);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-dim);
+    margin-top: 1.6rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--line);
+    line-height: 1.7;
+  }
+
+  /* ---------- Section labels ---------- */
+  .section-head{
+    display:flex; align-items:baseline; gap: 0.9rem;
+    margin: 0 0 1.4rem;
+  }
+  .section-head .tc-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+  .section-head h2{
+    font-family:'Syne', sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: clamp(1.15rem, 2.1vw, 1.5rem);
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--accent);
+  }
+  .section-head h2 .sub{
+    font-family:'Archivo', sans-serif;
+    font-style: italic;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 0.55em;
+    color: var(--accent-dim);
+  }
+  .section-head .rule{
+    flex:1; height:1px; background: var(--line-strong);
+  }
+
+  /* ---------- Film grid ---------- */
+  .films{ padding: clamp(2.5rem, 5vw, 4rem) 0; }
+  .grid-films{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--gap);
+  }
+  .tile{
+    position:relative;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    overflow:hidden;
+    cursor: pointer;
+  }
+  .tile .ratio-16-9 .placeholder{
+    background:
+      repeating-linear-gradient(115deg, rgba(255,255,255,0.02) 0 2px, transparent 2px 24px),
+      var(--surface);
+  }
+  .tile .ph-title{ font-size: clamp(1.2rem, 2.4vw, 1.6rem); }
+
+  .tile .tc-burn{
+    position:absolute; bottom: 0.6rem; left: 0.7rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: rgba(236,232,225,0.55);
+    background: rgba(0,0,0,0.45);
+    padding: 0.15rem 0.4rem;
+    z-index: 1;
+  }
+
+  .info-panel{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; justify-content:flex-start;
+    padding: 1.1rem 1.2rem;
+    background: linear-gradient(180deg, rgba(8,8,9,0.96) 0%, rgba(8,8,9,0.88) 55%, rgba(8,8,9,0.75) 100%);
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity .28s ease, transform .28s ease;
+    z-index: 2;
+    pointer-events: none;
+  }
+  @media (hover: hover){
+    .tile:hover .info-panel,
+    .tile:focus-visible .info-panel,
+    .photo-tile:hover .info-panel,
+    .photo-tile:focus-visible .info-panel{
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .tile.is-active .info-panel,
+  .photo-tile.is-active .info-panel{
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* Mobile: nach dem Ansehen eines Films zeigt die Kachel dauerhaft die Infos,
+     Bild/Titel/Play-Button treten zurück, bis man erneut antippt. */
+  .tile.info-mode .poster{
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .tile.info-mode .info-panel{
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .info-panel .f-title{
+    font-family:'Syne', sans-serif;
+    font-weight:700;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+  .info-panel .f-director{
+    font-family:'Archivo', sans-serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 0.55rem;
+  }
+  .info-panel dl{
+    display:grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.22rem 0.6rem;
+    margin:0;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.66rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    line-height: 1.4;
+  }
+  .info-panel dt{ color: var(--accent-dim); }
+  .info-panel dd{ margin:0; }
+  .info-panel dd.festivals{ text-transform: none; letter-spacing: 0.01em; }
+  .fest-award{ color: var(--accent); display:inline-flex; align-items:center; gap:0.25em; }
+  .fest-award .laurel{ color: var(--accent); flex-shrink:0; }
+  .fest-award em{ font-style:normal; color: var(--accent-dim); }
+  .fest-dot{ color: var(--text-dim); }
+
+  /* ---------- Photo / installation grid ---------- */
+  .photos{ padding: clamp(2.5rem, 5vw, 4rem) 0 clamp(4rem, 8vw, 6rem); }
+  .grid-photos{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: calc(var(--gap) * 1.4);
+  }
+  .photo-tile{
+    position:relative;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    overflow:hidden;
+    cursor:pointer;
+  }
+  .photo-tile .ratio{ position:relative; width:100%; padding-top:42%; }
+
+  /* ---------- Galerie / Karussell innerhalb einer Installations-Kachel ---------- */
+  .gallery{ position:absolute; inset:0; }
+  .gallery-track{
+    display:flex;
+    width:100%; height:100%;
+    overflow-x:auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .gallery-track::-webkit-scrollbar{ display:none; }
+  .gallery-track > *{
+    flex: 0 0 100%;
+    width:100%; height:100%;
+    scroll-snap-align: start;
+    position:relative;
+  }
+  .gallery-image{
+    width:100%; height:100%;
+    object-fit: cover;
+    display:block;
+    transition: filter .6s ease;
+  }
+  /* Während die Soundinstallation läuft, bleibt das Bild dauerhaft abgedunkelt/weichgezeichnet,
+     damit der Fokus auf den Untertiteln liegt — auf beiden Bildern der Galerie. */
+  .audio-tile.is-playing .gallery-image{
+    filter: brightness(0.4) blur(3px);
+  }
+  .gallery-arrow{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:38px; height:38px; border-radius:50%;
+    border:1px solid var(--line-strong);
+    background: rgba(12,12,14,0.55);
+    color: var(--text);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    z-index: 6;
+    opacity: 0.55;
+    transition: opacity .25s, background .25s, color .25s, border-color .25s;
+    font-family:'Syne', sans-serif;
+    font-size: 1.3rem;
+    line-height: 1;
+  }
+  .gallery:hover .gallery-arrow, .gallery-arrow:focus-visible{ opacity: 1; }
+  .gallery-arrow:hover{ background: var(--accent); color:#0c0c0e; border-color: var(--accent); }
+  .gallery-arrow.prev{ left: 0.7rem; }
+  .gallery-arrow.next{ right: 0.7rem; }
+  .gallery-dots{
+    position:absolute; bottom: 0.7rem; left:0; right:0;
+    display:flex; justify-content:center; gap:0.4rem;
+    z-index: 6;
+  }
+  .gallery-dot{
+    width:6px; height:6px; border-radius:50%;
+    background: rgba(236,232,225,0.35);
+    transition: background .25s;
+  }
+  .gallery-dot.is-active{ background: var(--accent); }
+
+  /* ---------- Audio-Player (Sound-Installationen) ---------- */
+  .audio-slide{ position:relative; width:100%; height:100%; }
+  .audio-overlay{
+    position:absolute; inset:0;
+    background: linear-gradient(0deg, rgba(8,8,9,0.9) 0%, rgba(8,8,9,0.55) 35%, rgba(8,8,9,0.15) 65%, rgba(8,8,9,0) 100%);
+  }
+  .audio-stack{
+    position:absolute; left:0; right:0; bottom: 1.2rem;
+    display:flex; flex-direction:column; align-items:center;
+    gap: 0.7rem;
+    padding: 0 1rem;
+    z-index: 3;
+  }
+  .audio-controls-group{
+    display:flex; flex-direction:column; align-items:center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+  }
+  .audio-toggle{
+    border:1px solid var(--accent);
+    background: transparent;
+    padding:0;
+    cursor:pointer;
+    font: inherit;
+    flex-shrink: 0;
+    transition: background .2s, transform .2s;
+  }
+  .audio-tile.is-playing .audio-toggle{ background: var(--accent); }
+  .audio-tile.is-playing .audio-toggle svg rect{ fill:#0c0c0e; }
+  /* Wenn das Info-Panel aktiv ist (Tap auf Mobile), Play-Button zusätzlich hervorheben. */
+  .photo-tile.is-active .audio-toggle{
+    background: var(--accent);
+    transform: scale(1.08);
+  }
+  .photo-tile.is-active .audio-toggle svg path{ fill:#0c0c0e; }
+  .audio-bar{
+    width: min(560px, 92%);
+    display:flex; flex-direction:column; gap:0.4rem;
+  }
+  .audio-progress{
+    height: 3px; background: rgba(236,232,225,0.3); cursor:pointer; position:relative;
+    touch-action: none;
+  }
+  .audio-progress-fill{
+    height:100%; width:0%; background: var(--accent);
+    pointer-events: none;
+  }
+  .audio-time{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    text-align:center;
+  }
+  .subtitle-box{
+    width: min(560px, 90%);
+    display:flex; align-items:flex-end; justify-content:center;
+    padding: 0 0.5rem;
+  }
+  .subtitle-text{
+    margin:0;
+    font-family:'Archivo', sans-serif;
+    font-style: oblique 6deg;
+    font-weight: 400;
+    font-size: clamp(0.85rem, 1.4vw, 1rem);
+    line-height: 1.5;
+    color: var(--text);
+    text-align:center;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 2px 12px rgba(0,0,0,0.75), 0 0 24px rgba(0,0,0,0.6);
+    opacity: 0;
+    transition: opacity .45s ease;
+  }
+  .photo-tile .placeholder{
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(115deg, rgba(255,255,255,0.02) 0 2px, transparent 2px 24px),
+      var(--surface-2);
+  }
+
+  /* ---------- CV / Portrait ---------- */
+  .cv{ padding: 0 0 clamp(4rem, 9vw, 7rem); }
+  .cv-inner{
+    display:flex;
+    gap: clamp(1.75rem, 4vw, 3rem);
+    align-items:flex-start;
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+    border-top: 1px solid var(--line);
+  }
+  .cv-portrait{
+    flex: 0 0 auto;
+    width: clamp(140px, 18vw, 220px);
+    aspect-ratio: 3 / 4;
+    overflow:hidden;
+    border: 1px solid var(--line-strong);
+  }
+  .cv-portrait img{
+    width:100%; height:100%; object-fit:cover;
+    display:block;
+    filter: grayscale(15%) contrast(1.05) brightness(0.96);
+  }
+  .cv-content{
+    flex:1;
+    display:flex;
+    flex-wrap:wrap;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+  .cv-block{ flex: 1 1 240px; min-width: 220px; }
+  .cv-block h3{
+    margin: 0 0 0.9rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .cv-list{ margin:0; display:flex; flex-direction:column; gap: 0.9rem; }
+  .cv-list dt{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    margin-bottom: 0.2rem;
+  }
+  .cv-list dd{
+    margin:0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  @media (max-width: 640px){
+    .cv-inner{ flex-direction:column; }
+    .cv-portrait{ width: 150px; }
+  }
+
+  footer{
+    border-top: 1px solid var(--line);
+    padding: 2rem 0 3rem;
+  }
+  footer .foot-inner{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .foot-email{ text-transform: none; letter-spacing: 0.01em; font-size: 2em; }
+
+  /* ---------- Video-Lightbox ---------- */
+  #pageContent{ transition: filter .35s ease; }
+  body.modal-open #pageContent{ filter: blur(14px) brightness(0.7); }
+  body.modal-open{ overflow: hidden; }
+
+  .video-modal{
+    position: fixed; inset:0; z-index: 100;
+    display:flex; align-items:center; justify-content:center;
+    padding: clamp(1rem, 4vw, 3rem);
+    background: rgba(6,6,7,0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .video-modal.is-open{ opacity:1; pointer-events:auto; }
+
+  .modal-frame{
+    position:relative;
+    width: min(1100px, 100%);
+    aspect-ratio: 16 / 9;
+    background:#000;
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+    transform: scale(0.96);
+    transition: transform .3s ease;
+  }
+  .video-modal.is-open .modal-frame{ transform: scale(1); }
+  .modal-frame iframe{
+    position:absolute; inset:0; width:100%; height:100%; border:0;
+  }
+  .modal-close{
+    position: absolute;
+    top: -46px; right: 0;
+    width: 36px; height: 36px;
+    border: 1px solid var(--line-strong);
+    background: rgba(23,23,27,0.9);
+    color: var(--text);
+    font-size: 1.4rem;
+    line-height: 1;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition: background .2s, color .2s, border-color .2s;
+  }
+  .modal-close:hover{ background: var(--accent); color:#0c0c0e; border-color: var(--accent); }
+  @media (max-width: 600px){
+    .modal-close{ top:-42px; right:0; width:32px; height:32px; font-size:1.2rem; }
+  }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 780px){
+    :root{ --gap: 0.85rem; }
+    .grid-films{ grid-template-columns: 1fr; }
+    .contact-links{ gap: 1rem; }
+
+    .hero{ padding: 1.3rem 0 1rem; }
+    .bio{ padding: 1.3rem 0 1.8rem; }
+    .films{ padding: 1.6rem 0; }
+    .photos{ padding: 1.6rem 0 2.5rem; }
+    .section-head{ margin-bottom: 0.9rem; }
+    .section-head h2{ font-size: 1.15rem; }
+    .foot-email{ font-size: 1em; }
+
+    .photo-tile .ratio{ padding-top: 54%; }
+
+    .subtitle-text{ font-size: 0.72rem; line-height: 1.4; }
+    .subtitle-box{ width: 94%; }
+
+    /* Während die Soundinstallation läuft: Steuerung kompakt in die untere Ecke,
+       damit möglichst viel Fläche für die Untertitel frei bleibt (Kachelgröße
+       bleibt dabei unverändert). */
+    .audio-tile.is-playing .audio-stack{
+      position:absolute; top:0.7rem; left:0; right:0; bottom:0;
+      flex-direction: column;
+      padding: 0 0.6rem 0.5rem;
+      gap: 0.4rem;
+    }
+    .audio-tile.is-playing .subtitle-box{
+      flex: 1;
+      width: 100%;
+      align-items: center;
+      padding: 0;
+    }
+    .audio-tile.is-playing .audio-controls-group{
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.55rem;
+      width: 100%;
+    }
+    .audio-tile.is-playing .play-btn{
+      width: 30px; height: 30px;
+      flex-shrink: 0;
+    }
+    .audio-tile.is-playing .audio-bar{
+      width: auto;
+      flex: 1;
+    }
+    .audio-tile.is-playing .audio-time{ text-align: left; }
+
+    /* Kacheln spürbar schmaler (und dadurch bei festem Seitenverhältnis auch
+       niedriger) statt volle Breite auszureizen. */
+    .grid-films{ max-width: 78%; margin: 0 auto; }
+    .grid-photos{ max-width: 78%; margin: 0 auto; }
+
+    .play-btn{ width: 46px; height: 46px; }
+    .tile .play-btn, .hero-frame .play-btn{ width: 36px; height: 36px; }
+
+    .cv-inner{ padding-top: 1.6rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .info-panel, .contact-links a::after{ transition:none; }
+  }
+
+  /* ---------- Film grain ---------- */
+  .grain{
+    position: fixed; inset:0; z-index: 50; pointer-events:none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- Scroll-Einblendung der Kacheln ---------- */
+  .tile, .photo-tile{
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .tile.in-view, .photo-tile.in-view{
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce){
+    .tile, .photo-tile{ opacity:1; transform:none; transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div id="pageContent">
+<header>
+  <div class="wrap header-inner">
+    <div class="brand">Nils Düren</div>
+    <div class="contact-links">
+      <a href="mailto:duerennils95@gmail.com">E-Mail</a>
+      <a href="https://instagram.com/nils_dueren_wiediestadt" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero wrap">
+    <div class="hero-frame">
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+      <div class="ratio-16-9" id="heroVideo" data-vimeo-id="1211484415">
+        <iframe
+          src="https://player.vimeo.com/video/1211484415?autoplay=1&title=0&byline=0&portrait=0&color=c9a24b"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+    </div>
+    <div class="reel-meta">
+      <span>Showreel</span>
+      <span class="tc">2022–2026</span>
+    </div>
+  </section>
+
+  <section class="bio wrap">
+    <p>Nils Düren is a freelance editor and video artist based in Berlin. His focus is on narrative storytelling in fiction, documentary, and hybrid forms. Trained in dramaturgical analysis and methodical editing at <em>Filmuniversity Babelsberg KONRAD WOLF</em>, he identifies the core of every story to support and help bring the director's vision to&nbsp;life.</p>
+    <p class="approach">Every cut begins with an unguarded encounter: letting the footage speak before judgement sets in. From there, the work becomes a dialogue, understanding the tone, atmosphere, and core the filmmakers set out to capture. Only then does structure emerge: characters take shape, performances are weighed, dramaturgy becomes the skeleton that lets the film breathe. The aim, always, is an arrangement of image and sound that makes the emotion felt.</p>
+  </section>
+
+  <section class="films wrap">
+    <div class="section-head">
+      <h2>Film Projects <span class="sub">(selected scenes)</span></h2>
+      <span class="rule"></span>
+    </div>
+
+    <div class="grid-films" id="filmGrid">
+      <!-- Film tiles werden per JS aus den Daten unten gerendert -->
+    </div>
+  </section>
+
+  <section class="photos wrap">
+    <div class="section-head">
+      <h2>Video &amp; Sound Installations</h2>
+      <span class="rule"></span>
+    </div>
+
+    <div class="grid-photos" id="photoGrid">
+      <!-- Photo tiles werden per JS aus den Daten unten gerendert -->
+    </div>
+  </section>
+
+  <section class="cv wrap">
+    <div class="cv-inner">
+      <div class="cv-portrait">
+        <img src="images/portrait-nils.jpg" alt="Nils Düren">
+      </div>
+      <div class="cv-content">
+        <div class="cv-block">
+          <h3>Study</h3>
+          <dl class="cv-list">
+            <dt>Since 2025</dt><dd>Montage (M.F.A) at Filmuniversity Babelsberg KONRAD WOLF</dd>
+            <dt>2021&ndash;2025</dt><dd>Montage (B.F.A) at Filmuniversity Babelsberg KONRAD WOLF</dd>
+            <dt>2016&ndash;2019</dt><dd>Film Studies and Philosophy (B.A) at JGU Mainz</dd>
+          </dl>
+        </div>
+        <div class="cv-block">
+          <h3>Work</h3>
+          <dl class="cv-list">
+            <dt>Since 2021</dt><dd>Postproduction and production operations for film projects as well as image movies/advertisements for small companies</dd>
+            <dt>2020&ndash;2021</dt><dd>Intern at Deauville Green Awards (organization and execution of the film festival in Paris and Deauville)</dd>
+            <dt>2016</dt><dd>Intern at real&amp;fiction Film- and TV Production, Cologne</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span>Nils Düren — Editor, Berlin</span>
+    <span class="foot-email">duerennils95@gmail.com</span>
+    <span>© 2026</span>
+  </div>
+</footer>
+</div>
+
+<div class="video-modal" id="videoModal">
+  <div class="modal-frame">
+    <button class="modal-close" id="modalClose" aria-label="Video schließen">&times;</button>
+    <div class="modal-video-wrap" id="modalVideoWrap"></div>
+  </div>
+</div>
+
+<script>
+  // ---- Video-Lightbox: öffnet das Video groß & zentriert, Rest der Seite verschwimmt ----
+  const videoModal = document.getElementById('videoModal');
+  const modalVideoWrap = document.getElementById('modalVideoWrap');
+  const modalClose = document.getElementById('modalClose');
+  let modalOriginTile = null;
+
+  function openVideoModal(vimeoId, originTile) {
+    if (!vimeoId) return;
+    modalOriginTile = originTile || null;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://player.vimeo.com/video/${vimeoId}?autoplay=1&title=0&byline=0&portrait=0&color=c9a24b`;
+    iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+    iframe.allowFullscreen = true;
+    modalVideoWrap.innerHTML = '';
+    modalVideoWrap.appendChild(iframe);
+    videoModal.classList.add('is-open');
+    document.body.classList.add('modal-open');
+  }
+
+  function closeVideoModal() {
+    videoModal.classList.remove('is-open');
+    document.body.classList.remove('modal-open');
+    // iframe erst nach Ende der Ausblend-Animation entfernen, stoppt gleichzeitig die Wiedergabe
+    setTimeout(() => { modalVideoWrap.innerHTML = ''; }, 300);
+    // Nach dem Ansehen (Mobile): Kachel zeigt jetzt die Infos statt Bild/Titel/Play-Button,
+    // bis man erneut antippt.
+    if (modalOriginTile && window.matchMedia('(hover: none)').matches) {
+      modalOriginTile.classList.add('info-mode');
+    }
+    modalOriginTile = null;
+  }
+
+  modalClose.addEventListener('click', closeVideoModal);
+  videoModal.addEventListener('click', (e) => {
+    if (e.target === videoModal) closeVideoModal(); // Klick außerhalb des Frames schließt das Video
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && videoModal.classList.contains('is-open')) closeVideoModal();
+  });
+
+  // ---- Echte Vimeo-Thumbnails per oEmbed nachladen (ersetzt das Platzhalter-Streifenmuster) ----
+  function loadThumbnail(container) {
+    const id = container.dataset.vimeoId;
+    if (!id) return;
+    fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${id}`)
+      .then((r) => { if (!r.ok) throw new Error('oEmbed failed'); return r.json(); })
+      .then((data) => {
+        const poster = container.querySelector('.poster');
+        if (poster && data.thumbnail_url) {
+          poster.style.backgroundImage =
+            `linear-gradient(0deg, rgba(8,8,9,0.35), rgba(8,8,9,0.15)), url('${data.thumbnail_url}')`;
+          poster.style.backgroundSize = 'cover';
+          poster.style.backgroundPosition = 'center';
+          poster.classList.add('has-thumb');
+        }
+      })
+      .catch(() => { /* Thumbnail nicht verfügbar (z.B. Domain noch nicht freigegeben) — Platzhalter bleibt sichtbar */ });
+  }
+
+  document.addEventListener('click', (e) => {
+    const poster = e.target.closest('.poster');
+    if (!poster) return;
+    const tile = poster.closest('.tile');
+    const container = poster.closest('[data-vimeo-id]');
+    if (container) openVideoModal(container.dataset.vimeoId, tile);
+  });
+
+  const films = [
+    {
+      title: "Muscles & Mud", year: "2026", duration: "24'",
+      director: "Nils Düren", role: "Directing &amp; Editing",
+      festivals: null, vimeoId: "1211484146"
+    },
+    {
+      title: "I'm Breathing All The Time", year: "2025", duration: "34'",
+      director: "Rosa Gocht (3sat Co-Production)", role: "Editing",
+      festivals: [
+        { name: "Dokfest Kassel" },
+        { name: "AchtungBerlin", award: "Special Mention Award" },
+        { name: "Dokfest München" }
+      ],
+      vimeoId: "1211484144"
+    },
+    {
+      title: "Power of the Mirror", year: "2024", duration: "30'",
+      director: "Ido Gotlib (3sat Co-Production)", role: "Editing",
+      festivals: [{ name: "Camerimage" }, { name: "Filmz Mainz" }], vimeoId: "1211484407"
+    },
+    {
+      title: "Visit Slovenia", year: "2023", duration: "13'",
+      director: "Rosa Gocht", role: "Editing &amp; Script Supervision",
+      festivals: [{ name: "International Filmfest Etiuda&amp;Anima" }], vimeoId: "1211484427"
+    },
+    {
+      title: "Bitte.Danke.Genau", year: "2023", duration: "18'",
+      director: "Polina Kundirenko", role: "Editing",
+      festivals: [{ name: "Max Ophüls Filmfestival" }, { name: "Filmfest Dresden" }], vimeoId: "1211992298"
+    },
+    {
+      title: "Actually Literally Arm in Arm", year: "2022", duration: "15'",
+      director: "Nathalie Fischer", role: "Editing",
+      festivals: [
+        { name: "dox!", award: "Winner ECFA Documentary Award" },
+        { name: "kurzsuechtig" },
+        { name: "go short" },
+        { name: "let's doc" }
+      ],
+      vimeoId: "1211484147"
+    },
+  ];
+
+  function tc(str) {
+    const [mm, ss, cc] = str.split(':').map(Number);
+    return mm * 60 + ss + (cc || 0) / 100;
+  }
+
+  const photos = [
+    {
+      title: "Ein Alter Tag", audio: "audio/ein-alter-tag.mp3",
+      subtitles: [
+        { start: tc('00:33:12'), end: tc('00:38:00'), text: "It's an old day, the sun already hangs so low." },
+        { start: tc('00:42:22'), end: tc('00:52:19'), text: "My grandmother pinches the back of my little hand. When she lets go of the skin, it springs right back into place." },
+        { start: tc('00:55:04'), end: tc('00:57:23'), text: '"That\'s how young you are," she says.' },
+        { start: tc('01:00:11'), end: tc('01:14:22'), text: "I do the same to her, taking the warm, soft skin between forefinger and thumb. When I let go, the skin lingers, oddly raised, as if it has to think about where it actually belongs." },
+        { start: tc('01:22:18'), end: tc('01:31:12'), text: "River, you babble along, and I believe you when you say you're peaceful. But don't you think it looks like rain is coming?" },
+        { start: tc('01:35:19'), end: tc('01:51:21'), text: "His fingers keep changing. One moment they stroke my face, the next they press against the veins in my neck. Just like I used to do with the garden hose, to annoy my father. One kink, and the water that wanted to flow got stuck." },
+        { start: tc('02:12:18'), end: tc('02:29:08'), text: 'His fingers keep changing. Nails sprout from their tips and I cut them off. "Hey Chatti, how many times does a person have to cut their nails in a lifetime?" About 2,500 more times, then I\'m done.' },
+        { start: tc('02:33:03'), end: tc('02:44:06'), text: "Here comes the flood. The paper boat I just built, you carry it away as you swell. Out of old, make new. Something new wants to grow old." },
+        { start: tc('02:56:16'), end: tc('03:15:06'), text: "His fingers keep changing. I watch them dance through artificial fog in coloured light. Then the fingers are gone. Everything dissolved, for a moment. Now. Here. You, me, or no one, but everyone at once." },
+        { start: tc('03:22:10'), end: tc('03:44:06'), text: "Now I meet a different man every few weeks. Sometimes two. And then I think of you again. The life we once shared. The room we slept in is still the same, just like the tree growing in through the window. I watch another spring burst from its buds." },
+        { start: tc('03:54:23'), end: tc('04:11:03'), text: "I told you it would stay like this forever, and you believed me. Like a child who believes it will always be a child. Who believes it will always only reach its mother's belly when it hugs her. Its cheek pressed tight against the soft skin behind which it once lived." },
+        { start: tc('04:16:22'), end: tc('04:34:23'), text: "Mom. Today you only reach my belly when we hug. Can you hear my stomach too, when you press your ear against me? The acid breaking down dinner? My lungs, inflating and collapsing again?" },
+        { start: tc('04:39:08'), end: tc('04:49:11'), text: "My brother's children call you grandma. Mom. I take the skin on the back of your hand between thumb and forefinger." },
+      ],
+      credits: [
+        ['Concept &amp; Sound Design', 'Nils Düren'],
+        ['Music', 'Konrad Meyburg'],
+        ['Exhibition', 'Localize Festival Potsdam 2026'],
+      ],
+      images: ["images/soundinstallation-1.jpg", "images/soundinstallation-2.jpg"]
+    },
+    {
+      title: "Bewohnte Körper",
+      credits: [
+        ['Concept', 'Nils Düren, Cosmo Bandilla'],
+        ['Medium', "Installation, 2-channel video, 5' loop, colour, sound, sculpture with light programming"],
+        ['Exhibition', 'Kunsthalle Brennabor, Brandenburg an der Havel, 2026'],
+      ],
+      images: ["images/brennabor-1.jpg", "images/brennabor-2.jpg"]
+    },
+    {
+      title: "Muskeln &amp; Schlamm",
+      credits: [
+        ['Concept', 'Nils Düren'],
+        ['Music', 'Lena Radivoj'],
+        ['Medium', "Multi-channel installation, video, 5' loop, colour, sound"],
+        ['Exhibition', 'Filmuniversity Babelsberg, 2024'],
+      ],
+      images: ["images/studio-1.jpg", "images/studio-2.jpg"]
+    },
+  ];
+
+  const laurelSvg = `<svg class="laurel" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 20C6 14 6 8 4 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M20 20C18 14 18 8 20 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M4 6c2 .5 3-1 3-1M4 10c2 .5 3-1 3-1M4 14c2 .5 3-1 3-1M4 18c2 .5 3-1 3-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M20 6c-2 .5-3-1-3-1M20 10c-2 .5-3-1-3-1M20 14c-2 .5-3-1-3-1M20 18c-2 .5-3-1-3-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  </svg>`;
+
+  function renderFestivals(festivals) {
+    if (!festivals) return '';
+    return festivals.map((f) => {
+      if (f.award) {
+        return `<span class="fest-award">${laurelSvg}${f.name} <em>(${f.award})</em></span>`;
+      }
+      return `<span>${f.name}</span>`;
+    }).join(' <span class="fest-dot">·</span> ');
+  }
+
+  // ---- Mobile: Tap-Info mit Auto-Ausblenden nach 3s, nur eine Kachel gleichzeitig aktiv ----
+  let activeInfoTile = null;
+  let activeInfoTimer = null;
+  function showTileInfo(tile) {
+    if (activeInfoTile && activeInfoTile !== tile) {
+      activeInfoTile.classList.remove('is-active');
+    }
+    clearTimeout(activeInfoTimer);
+    tile.classList.add('is-active');
+    activeInfoTile = tile;
+    activeInfoTimer = setTimeout(() => {
+      tile.classList.remove('is-active');
+      if (activeInfoTile === tile) activeInfoTile = null;
+    }, 3000);
+  }
+  function hideTileInfo(tile) {
+    tile.classList.remove('is-active');
+    clearTimeout(activeInfoTimer);
+    if (activeInfoTile === tile) activeInfoTile = null;
+  }
+
+  const filmGrid = document.getElementById('filmGrid');
+  films.forEach((f) => {
+    const tile = document.createElement('div');
+    tile.className = 'tile';
+    tile.tabIndex = 0;
+    tile.innerHTML = `
+      <div class="ratio-16-9" data-vimeo-id="${f.vimeoId}">
+        <div class="placeholder poster">
+          <div class="play-btn">
+            <svg width="14" height="16" viewBox="0 0 16 18"><path d="M0 0L16 9L0 18V0Z" fill="var(--accent)"/></svg>
+          </div>
+          <div class="ph-title">${f.title}</div>
+        </div>
+        <div class="info-panel">
+          ${f.director ? `<div class="f-director">Directed by ${f.director}</div>` : ''}
+          <dl>
+            <dt>Year</dt><dd>${f.year}</dd>
+            <dt>Duration</dt><dd>${f.duration}</dd>
+            <dt>Role</dt><dd>${f.role}</dd>
+            ${f.festivals ? `<dt>Festivals</dt><dd class="festivals">${renderFestivals(f.festivals)}</dd>` : ''}
+          </dl>
+        </div>
+      </div>
+    `;
+    tile.addEventListener('click', (e) => {
+      if (e.target.closest('.poster')) return; // Poster-Klick lädt das Video, siehe unten
+      if (window.matchMedia('(hover: none)').matches && tile.classList.contains('info-mode')) {
+        tile.classList.remove('info-mode'); // zurück zur Ursprungstafel (Bild, Titel, Play-Button)
+      }
+    });
+    filmGrid.appendChild(tile);
+    loadThumbnail(tile.querySelector('[data-vimeo-id]'));
+  });
+
+  const playIcon = `<svg width="14" height="16" viewBox="0 0 16 18"><path d="M0 0L16 9L0 18V0Z" fill="var(--accent)"/></svg>`;
+  const pauseIcon = `<svg width="14" height="14" viewBox="0 0 16 16"><rect x="1" y="0" width="5" height="16" fill="var(--accent)"/><rect x="10" y="0" width="5" height="16" fill="var(--accent)"/></svg>`;
+  function formatTime(sec) {
+    if (!isFinite(sec)) return '00:00';
+    const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+    return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+
+  // Verkleinert die Schrift eines Untertitel-Elements schrittweise, bis der komplette
+  // Text innerhalb seines verfügbaren Bereichs Platz hat — Fläche und Button-Position
+  // ändern sich dabei nie, nur die Textgröße passt sich an.
+  function fitSubtitleText(el) {
+    const container = el.closest('.subtitle-box');
+    if (!container) return;
+    let size = parseFloat(window.getComputedStyle(el).fontSize);
+    const minSize = 9; // px — Untergrenze für Lesbarkeit
+    let guard = 0;
+    while (el.scrollHeight > container.clientHeight && size > minSize && guard < 24) {
+      size -= 1;
+      el.style.fontSize = size + 'px';
+      guard++;
+    }
+  }
+
+  const photoGrid = document.getElementById('photoGrid');
+  photos.forEach((p) => {
+    const tile = document.createElement('div');
+    tile.className = 'photo-tile';
+    tile.tabIndex = 0;
+    if (p.audio) tile.classList.add('audio-tile');
+
+    const creditsHtml = (p.credits || []).map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+    const images = p.images || [];
+    const slideCount = images.length;
+
+    tile.innerHTML = `
+      <div class="ratio">
+        <div class="gallery">
+          <div class="gallery-track">
+            ${images.map((src, i) => {
+              if (p.audio) {
+                return `
+                <div class="audio-slide">
+                  <img class="gallery-image" src="${src}" alt="${p.title}" loading="lazy">
+                  <div class="audio-overlay">
+                    <div class="audio-stack">
+                      <div class="subtitle-box"><p class="subtitle-text"></p></div>
+                      <div class="audio-controls-group">
+                        <button class="play-btn audio-toggle" aria-label="Play/Pause">${playIcon}</button>
+                        <div class="audio-bar">
+                          <div class="audio-progress"><div class="audio-progress-fill"></div></div>
+                          <div class="audio-time"><span class="cur">00:00</span> / <span class="dur">00:00</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>`;
+              }
+              return `<div><img class="gallery-image" src="${src}" alt="${p.title}" loading="lazy"></div>`;
+            }).join('')}
+          </div>
+          ${p.audio ? `<audio class="audio-el" src="${p.audio}" preload="metadata"></audio>` : ''}
+          ${slideCount > 1 ? `
+          <button class="gallery-arrow prev" aria-label="Previous">‹</button>
+          <button class="gallery-arrow next" aria-label="Next">›</button>
+          <div class="gallery-dots">${Array.from({length: slideCount}).map((_, i) => `<div class="gallery-dot${i === 0 ? ' is-active' : ''}"></div>`).join('')}</div>
+          ` : ''}
+        </div>
+        <div class="info-panel">
+          <div class="f-title">${p.title}</div>
+          <dl>${creditsHtml}</dl>
+        </div>
+      </div>
+    `;
+
+    // ---- Galerie-Navigation (Pfeile, Dots, Wischen/Scrollen läuft nativ über overflow-x) ----
+    const track = tile.querySelector('.gallery-track');
+    const prevBtn = tile.querySelector('.gallery-arrow.prev');
+    const nextBtn = tile.querySelector('.gallery-arrow.next');
+    const dots = tile.querySelectorAll('.gallery-dot');
+    if (prevBtn) prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      track.scrollBy({ left: -track.clientWidth, behavior: 'smooth' });
+    });
+    if (nextBtn) nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      track.scrollBy({ left: track.clientWidth, behavior: 'smooth' });
+    });
+    if (dots.length) {
+      let scrollTimer = null;
+      track.addEventListener('scroll', () => {
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(() => {
+          const idx = Math.round(track.scrollLeft / track.clientWidth);
+          dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
+        }, 80);
+      });
+    }
+
+    if (p.audio) {
+      const audioEl = tile.querySelector('.audio-el');
+      const toggleBtns = tile.querySelectorAll('.audio-toggle');
+      const progressWraps = tile.querySelectorAll('.audio-progress');
+      const progressFills = tile.querySelectorAll('.audio-progress-fill');
+      const curEls = tile.querySelectorAll('.cur');
+      const durEls = tile.querySelectorAll('.dur');
+      const subtitleTexts = tile.querySelectorAll('.subtitle-text');
+      let activeSubIndex = -1;
+      let subtitleTimer = null;
+
+      toggleBtns.forEach((btn) => btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (audioEl.paused) {
+          audioEl.play().catch((err) => console.error('Audio play failed:', err));
+        } else {
+          audioEl.pause();
+        }
+      }));
+      audioEl.addEventListener('error', () => {
+        console.error('Audio-Fehler:', audioEl.error, '— gesuchter Pfad:', audioEl.currentSrc);
+      });
+      audioEl.addEventListener('play', () => {
+        toggleBtns.forEach((b) => { b.innerHTML = pauseIcon; });
+        tile.classList.add('is-playing');
+      });
+      audioEl.addEventListener('pause', () => {
+        toggleBtns.forEach((b) => { b.innerHTML = playIcon; });
+        tile.classList.remove('is-playing');
+      });
+      audioEl.addEventListener('ended', () => {
+        toggleBtns.forEach((b) => { b.innerHTML = playIcon; });
+        tile.classList.remove('is-playing');
+        activeSubIndex = -1;
+        subtitleTexts.forEach((s) => { s.style.opacity = 0; });
+      });
+      audioEl.addEventListener('loadedmetadata', () => {
+        durEls.forEach((d) => { d.textContent = formatTime(audioEl.duration); });
+      });
+      audioEl.addEventListener('timeupdate', () => {
+        const curStr = formatTime(audioEl.currentTime);
+        curEls.forEach((c) => { c.textContent = curStr; });
+        if (audioEl.duration) {
+          const pct = `${(audioEl.currentTime / audioEl.duration) * 100}%`;
+          progressFills.forEach((f) => { f.style.width = pct; });
+        }
+
+        if (p.subtitles) {
+          const t = audioEl.currentTime;
+          const idx = p.subtitles.findIndex((s) => t >= s.start && t <= s.end);
+          if (idx !== activeSubIndex) {
+            activeSubIndex = idx;
+            subtitleTexts.forEach((s) => { s.style.opacity = 0; });
+            clearTimeout(subtitleTimer);
+            subtitleTimer = setTimeout(() => {
+              const text = idx >= 0 ? p.subtitles[idx].text : '';
+              subtitleTexts.forEach((s) => {
+                s.style.fontSize = ''; // zurück auf CSS-Basisgröße, bevor neu geprüft wird
+                s.textContent = text;
+                if (idx >= 0) {
+                  s.style.opacity = 1;
+                  fitSubtitleText(s);
+                }
+              });
+            }, 400);
+          }
+        }
+      });
+      progressWraps.forEach((wrap) => {
+        let dragging = false;
+        const seekFromEvent = (e) => {
+          if (!audioEl.duration) return;
+          const rect = wrap.getBoundingClientRect();
+          const x = Math.min(Math.max(e.clientX - rect.left, 0), rect.width);
+          audioEl.currentTime = (x / rect.width) * audioEl.duration;
+        };
+        wrap.addEventListener('pointerdown', (e) => {
+          e.stopPropagation();
+          dragging = true;
+          wrap.setPointerCapture(e.pointerId);
+          seekFromEvent(e);
+        });
+        wrap.addEventListener('pointermove', (e) => {
+          if (!dragging) return;
+          e.stopPropagation();
+          seekFromEvent(e);
+        });
+        wrap.addEventListener('pointerup', (e) => {
+          dragging = false;
+          e.stopPropagation();
+        });
+        wrap.addEventListener('pointercancel', () => { dragging = false; });
+      });
+    }
+
+    tile.addEventListener('click', (e) => {
+      if (e.target.closest('.audio-toggle, .audio-progress, .gallery-arrow')) return;
+      if (window.matchMedia('(hover: none)').matches) {
+        if (tile.classList.contains('is-active')) {
+          hideTileInfo(tile);
+          const playBtn = tile.querySelector('.audio-toggle');
+          if (playBtn) playBtn.click();
+        } else {
+          showTileInfo(tile);
+        }
+      }
+    });
+    photoGrid.appendChild(tile);
+  });
+
+  // ---- Gestaffeltes Einblenden beim Scrollen ins Bild ----
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduceMotion) {
+    document.querySelectorAll('.grid-films, .grid-photos').forEach((grid) => {
+      Array.from(grid.children).forEach((el, i) => {
+        el.style.transitionDelay = `${Math.min(i, 5) * 90}ms`;
+      });
+    });
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.tile, .photo-tile').forEach((el) => revealObserver.observe(el));
+  } else {
+    document.querySelectorAll('.tile, .photo-tile').forEach((el) => el.classList.add('in-view'));
+  }
+</script>
+
+</body>
+</html>
