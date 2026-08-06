@@ -571,6 +571,12 @@
     text-transform: uppercase;
   }
   .foot-email{ text-transform: none; letter-spacing: 0.01em; font-size: 2em; }
+  .foot-legal{ display:flex; gap: 1.2rem; }
+  .foot-legal a{ position:relative; padding-bottom:2px; transition:color .25s; }
+  .foot-legal a:hover{ color: var(--accent); }
+  @media (max-width: 780px){
+    .foot-legal{ order: 3; width: 100%; justify-content:center; }
+  }
 
   /* ---------- Video-Lightbox ---------- */
   #pageContent{ transition: filter .35s ease; }
@@ -802,6 +808,10 @@
   <div class="wrap foot-inner">
     <span>Nils Düren — Editor, Berlin</span>
     <span class="foot-email">duerennils95@gmail.com</span>
+    <nav class="foot-legal">
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
+    </nav>
     <span>© 2026</span>
   </div>
 </footer>
