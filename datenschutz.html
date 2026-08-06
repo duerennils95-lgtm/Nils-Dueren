@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datenschutz — Nils Düren</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Archivo:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0c0c0e;
+    --line: rgba(236,232,225,0.09);
+    --line-strong: rgba(236,232,225,0.18);
+    --text: #ece8e1;
+    --text-dim: #918f89;
+    --accent: #c9a24b;
+    --accent-dim: #8a713a;
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Archivo', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a{ color: inherit; }
+  ::selection{ background: var(--accent); color: #0c0c0e; }
+
+  .wrap{ max-width: 760px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 3rem); }
+
+  header{
+    border-bottom: 1px solid var(--line);
+    padding: 1.1rem 0;
+  }
+  .header-inner{ display:flex; align-items:center; justify-content:space-between; }
+  .brand{
+    font-family:'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-decoration:none;
+  }
+  .back-link{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration:none;
+    transition: color .25s;
+  }
+  .back-link:hover{ color: var(--accent); }
+
+  main{ padding: clamp(2.5rem, 6vw, 4rem) 0 clamp(4rem, 8vw, 6rem); }
+
+  h1{
+    font-family:'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    color: var(--accent);
+    margin: 0 0 2rem;
+  }
+  h2{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    margin: 2.4rem 0 0.8rem;
+  }
+  h3{
+    font-family:'Archivo', sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text);
+    margin: 1.4rem 0 0.4rem;
+  }
+  p, li{
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text);
+    margin: 0 0 0.7rem;
+  }
+  ul{ margin: 0 0 0.8rem; padding-left: 1.2rem; }
+  .dim{ color: var(--text-dim); }
+  a.inline{ color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+  footer{
+    border-top: 1px solid var(--line);
+    padding: 2rem 0 3rem;
+  }
+  .foot-inner{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .foot-legal{ display:flex; gap: 1.2rem; }
+  .foot-legal a{ text-decoration:none; transition:color .25s; }
+  .foot-legal a:hover{ color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html">Nils Düren</a>
+    <a class="back-link" href="index.html">← Zurück zur Website</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <h1>Datenschutzerklärung</h1>
+
+    <h2>Verantwortlicher</h2>
+    <p>
+      Nils Düren<br>
+      <!-- TODO: Hier deine vollständige ladungsfähige Anschrift eintragen (Straße, Hausnummer, PLZ, Ort) -->
+      [Straße und Hausnummer]<br>
+      [PLZ Ort]<br>
+      E-Mail: <a class="inline" href="mailto:duerennils95@gmail.com">duerennils95@gmail.com</a>
+    </p>
+
+    <h2>Allgemeines</h2>
+    <p>
+      Diese Website erhebt selbst keine personenbezogenen Daten über ein Kontaktformular, Newsletter oder
+      Cookies zu Analysezwecken. Beim Besuch der Seite werden dennoch technisch bedingt Daten durch das
+      Hosting sowie eingebundene Drittanbieter-Inhalte verarbeitet, die im Folgenden erläutert werden.
+    </p>
+
+    <h2>Hosting</h2>
+    <p>
+      Diese Website wird über <strong>GitHub Pages</strong> gehostet, einen Dienst der GitHub, Inc.
+      (bzw. GitHub B.V. in der EU), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA. Beim Aufruf
+      der Seite verarbeitet GitHub automatisch Server-Logdaten (u. a. IP-Adresse, Datum und Uhrzeit des
+      Zugriffs, aufgerufene Seite, verwendeter Browser), um die Website technisch ausliefern zu können.
+      Weitere Informationen: <a class="inline" href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a>.
+    </p>
+
+    <h2>Eingebettete Inhalte</h2>
+
+    <h3>Vimeo-Videos</h3>
+    <p>
+      Auf dieser Website sind Videos der Plattform Vimeo (Vimeo.com Inc., 555 West 18th Street, New York,
+      NY 10011, USA) eingebunden. Beim Abspielen eines Videos wird eine Verbindung zu Vimeo-Servern
+      hergestellt, wobei technisch bedingt Daten wie die IP-Adresse übertragen werden können. Vimeo kann
+      dabei ggf. eigene Cookies setzen. Weitere Informationen:
+      <a class="inline" href="https://vimeo.com/privacy" target="_blank" rel="noopener">Vimeo-Datenschutzerklärung</a>.
+    </p>
+
+    <h3>Google Fonts</h3>
+    <p>
+      Diese Website lädt Schriftarten von den Servern von Google (Google Ireland Limited, Gordon House,
+      Barrow Street, Dublin 4, Irland) nach. Dabei wird die IP-Adresse des aufrufenden Geräts an Google
+      übertragen. Weitere Informationen:
+      <a class="inline" href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google-Datenschutzerklärung</a>.
+    </p>
+
+    <h2>SSL-Verschlüsselung</h2>
+    <p>
+      Diese Seite nutzt eine SSL-Verschlüsselung (erkennbar am <code>https://</code> in der Adresszeile),
+      um die Übertragung von Inhalten zwischen Browser und Server abzusichern.
+    </p>
+
+    <h2>Ihre Rechte</h2>
+    <p>Sie haben jederzeit das Recht auf:</p>
+    <ul>
+      <li>Auskunft über die zu Ihrer Person gespeicherten Daten</li>
+      <li>Berichtigung unrichtiger personenbezogener Daten</li>
+      <li>Löschung Ihrer bei uns gespeicherten Daten</li>
+      <li>Einschränkung der Datenverarbeitung</li>
+      <li>Widerspruch gegen die Verarbeitung Ihrer Daten</li>
+      <li>Beschwerde bei einer Datenschutz-Aufsichtsbehörde</li>
+    </ul>
+    <p>Bei Fragen zum Datenschutz erreichen Sie mich unter der oben genannten E-Mail-Adresse.</p>
+
+    <p class="dim" style="margin-top:2.5rem; font-size:0.85rem;">
+      Stand: 2026. Diese Datenschutzerklärung wurde auf Basis der aktuell auf dieser Website eingebundenen
+      Dienste erstellt und ersetzt keine individuelle Rechtsberatung.
+    </p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span>Nils Düren — Editor, Berlin</span>
+    <nav class="foot-legal">
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
+    </nav>
+    <span>© 2026</span>
+  </div>
+</footer>
+
+</body>
+</html>
