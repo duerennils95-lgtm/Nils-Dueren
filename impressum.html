@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impressum — Nils Düren</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Archivo:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0c0c0e;
+    --line: rgba(236,232,225,0.09);
+    --line-strong: rgba(236,232,225,0.18);
+    --text: #ece8e1;
+    --text-dim: #918f89;
+    --accent: #c9a24b;
+    --accent-dim: #8a713a;
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Archivo', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a{ color: inherit; }
+  ::selection{ background: var(--accent); color: #0c0c0e; }
+
+  .wrap{ max-width: 760px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 3rem); }
+
+  header{
+    border-bottom: 1px solid var(--line);
+    padding: 1.1rem 0;
+  }
+  .header-inner{ display:flex; align-items:center; justify-content:space-between; }
+  .brand{
+    font-family:'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-decoration:none;
+  }
+  .back-link{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration:none;
+    transition: color .25s;
+  }
+  .back-link:hover{ color: var(--accent); }
+
+  main{ padding: clamp(2.5rem, 6vw, 4rem) 0 clamp(4rem, 8vw, 6rem); }
+
+  h1{
+    font-family:'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    color: var(--accent);
+    margin: 0 0 2rem;
+  }
+  h2{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    margin: 2.4rem 0 0.8rem;
+  }
+  p{
+    font-size: 0.98rem;
+    line-height: 1.7;
+    color: var(--text);
+    margin: 0 0 0.6rem;
+  }
+  .dim{ color: var(--text-dim); }
+  a.inline{ color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+  footer{
+    border-top: 1px solid var(--line);
+    padding: 2rem 0 3rem;
+  }
+  .foot-inner{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .foot-legal{ display:flex; gap: 1.2rem; }
+  .foot-legal a{ text-decoration:none; transition:color .25s; }
+  .foot-legal a:hover{ color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html">Nils Düren</a>
+    <a class="back-link" href="index.html">← Zurück zur Website</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <h1>Impressum</h1>
+
+    <h2>Angaben gemäß § 5 DDG</h2>
+    <p>
+      Nils Düren<br>
+      <!-- TODO: Hier deine vollständige ladungsfähige Anschrift eintragen (Straße, Hausnummer, PLZ, Ort) -->
+      [Straße und Hausnummer]<br>
+      [PLZ Ort]<br>
+      Deutschland
+    </p>
+
+    <h2>Kontakt</h2>
+    <p>E-Mail: <a class="inline" href="mailto:duerennils95@gmail.com">duerennils95@gmail.com</a></p>
+
+    <h2>Verantwortlich für den Inhalt</h2>
+    <p>Nils Düren (Anschrift wie oben)</p>
+
+    <h2 class="dim" style="margin-top:3rem;">Hinweis</h2>
+    <p class="dim">
+      Diese Website wird als freiberufliches Portfolio betrieben. Eine Umsatzsteuer-Identifikationsnummer ist,
+      soweit vorhanden, hier zu ergänzen.
+    </p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span>Nils Düren — Editor, Berlin</span>
+    <nav class="foot-legal">
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
+    </nav>
+    <span>© 2026</span>
+  </div>
+</footer>
+
+</body>
+</html>
